@@ -51,7 +51,7 @@ type (
 		StatusResponse *checkout.StatusResponse `json:"api_response,omitempty"`
 	}
 
-	GetCustomerResponse struct {
+	GetResponse struct {
 		StatusResponse *checkout.StatusResponse `json:"api_response,omitempty"`
 		Customer       *Customer                `json:"customer,omitempty"`
   }

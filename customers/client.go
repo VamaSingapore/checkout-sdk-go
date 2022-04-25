@@ -55,9 +55,9 @@ func (c *Client) Update(customerID string, request *Request) (*Response, error) 
 	return response, err
 }
 
-func (c *Client) Get(customerID string) (*GetCustomerResponse, error) {
+func (c *Client) Get(customerID string) (*GetResponse, error) {
 	resp, err := c.API.Get(fmt.Sprintf("/%v/%v", path, customerID))
-	response := &GetCustomerResponse{
+	response := &GetResponse{
 		StatusResponse: resp,
 	}
 
