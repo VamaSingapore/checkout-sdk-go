@@ -54,3 +54,25 @@ func (c *Client) Update(customerID string, request *Request) (*Response, error) 
 	}
 	return response, err
 }
+
+func (c *Client) Get(customerID string) (*GetResponse, error) {
+	resp, err := c.API.Get(fmt.Sprintf("/%v/%v", path, customerID))
+	response := &GetResponse{
+		StatusResponse: resp,
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	var customer Customer
+	err = json.Unmarshal(resp.ResponseBody, &customer)
+
+	if resp.StatusCode == http.StatusNoContent {
+		return nil, err
+	}
+
+	response.Customer = &customer
+
+	return response, err
+}
