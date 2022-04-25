@@ -1,6 +1,7 @@
 package customers
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -20,6 +21,23 @@ func NewClient(config checkout.Config) *Client {
 	return &Client{
 		API: httpclient.NewClient(config),
 	}
+}
+
+// Create a customer
+func (c *Client) Create(request *CreateRequest, params *checkout.Params) (*CreateResponse, error) {
+	resp, err := c.API.Post(fmt.Sprintf("/%v", path), request, params)
+	response := &CreateResponse{
+		StatusResponse: resp,
+	}
+	if err != nil {
+		return response, err
+	}
+
+	var id string
+	err = json.Unmarshal(resp.ResponseBody, &id)
+	response.ID = id
+
+	return response, err
 }
 
 // Update customer details
