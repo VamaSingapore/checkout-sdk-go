@@ -23,6 +23,23 @@ func NewClient(config checkout.Config) *Client {
 	}
 }
 
+// Create a customer
+func (c *Client) Create(request *CreateRequest, params *checkout.Params) (*CreateResponse, error) {
+	resp, err := c.API.Post(fmt.Sprintf("/%v", path), request, params)
+	response := &CreateResponse{
+		StatusResponse: resp,
+	}
+	if err != nil {
+		return response, err
+	}
+
+	var id string
+	err = json.Unmarshal(resp.ResponseBody, &id)
+	response.ID = id
+
+	return response, err
+}
+
 // Update customer details
 func (c *Client) Update(customerID string, request *Request) (*Response, error) {
 	resp, err := c.API.Patch(fmt.Sprintf("/%v/%v", path, customerID), request)

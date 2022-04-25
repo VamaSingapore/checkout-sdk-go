@@ -382,6 +382,7 @@ type (
 
 	// Customer ...
 	Customer struct {
+		ID       string `json:"id,omitempty"`
 		Document string `json:"document,omitempty"`
 		Email    string `json:"email,omitempty"`
 		Name     string `json:"name,omitempty"`
