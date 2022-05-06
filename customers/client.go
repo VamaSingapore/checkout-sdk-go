@@ -41,7 +41,7 @@ func (c *Client) Create(request *CreateRequest, params *checkout.Params) (*Creat
 }
 
 // Update customer details
-func (c *Client) Update(customerID string, request *Request) (*Response, error) {
+func (c *Client) Update(customerID string, request *UpdateRequest) (*Response, error) {
 	resp, err := c.API.Patch(fmt.Sprintf("/%v/%v", path, customerID), request)
 	response := &Response{
 		StatusResponse: resp,
@@ -50,9 +50,9 @@ func (c *Client) Update(customerID string, request *Request) (*Response, error) 
 		return response, err
 	}
 	if resp.StatusCode == http.StatusNoContent {
-		return response, err
+		return response, nil
 	}
-	return response, err
+	return response, nil
 }
 
 func (c *Client) Get(customerID string) (*GetResponse, error) {

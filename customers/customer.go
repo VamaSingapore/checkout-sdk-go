@@ -21,10 +21,20 @@ type (
 
 	// Customer -
 	Customer struct {
+		ID          string       `json:"id,omitempty"`
 		Email       string       `json:"email,omitempty"`
 		Name        string       `json:"name,omitempty"`
 		Default     string       `json:"default,omitempty"`
 		Instruments []Instrument `json:"instruments,omitempty"`
+	}
+
+	// UpdateRequest -
+	UpdateRequest struct {
+		Email    string            `json:"email,omitempty"`
+		Name     string            `json:"name,omitempty"`
+		Default  string            `json:"default,omitempty"`
+		Phone    *common.Phone     `json:"phone,omitempty"`
+		Metadata map[string]string `json:"metadata,omitempty"`
 	}
 
 	Instrument struct {
@@ -54,7 +64,7 @@ type (
 	GetResponse struct {
 		StatusResponse *checkout.StatusResponse `json:"api_response,omitempty"`
 		Customer       *Customer                `json:"customer,omitempty"`
-  }
+	}
 
 	// CreateResponse -
 	CreateResponse struct {
