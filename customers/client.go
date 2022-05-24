@@ -62,15 +62,15 @@ func (c *Client) Get(customerID string) (*GetResponse, error) {
 	}
 
 	if err != nil {
-		return nil, err
+		return response, err
+	}
+
+	if resp.StatusCode == http.StatusNoContent {
+		return response, err
 	}
 
 	var customer Customer
 	err = json.Unmarshal(resp.ResponseBody, &customer)
-
-	if resp.StatusCode == http.StatusNoContent {
-		return nil, err
-	}
 
 	response.Customer = &customer
 
