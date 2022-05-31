@@ -2,6 +2,7 @@ package instruments
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -76,5 +77,23 @@ func (c *Client) Update(sourceID string, request *Request) (*Response, error) {
 		response.InstrumentResponse = &instrumentResponse
 		return response, err
 	}
+	return response, err
+}
+
+// Delete an instrument
+func (c *Client) Delete(sourceID string) (*Response, error) {
+	resp, err := c.API.Delete(fmt.Sprintf("/%v/%v", path, sourceID))
+	response := &Response{
+		StatusResponse: resp,
+	}
+	if err != nil {
+		return response, err
+	}
+
+	// Success status code
+	if resp.StatusCode != http.StatusNoContent {
+		return response, errors.New("received invalid response status code")
+	}
+
 	return response, err
 }
