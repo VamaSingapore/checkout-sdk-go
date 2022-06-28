@@ -124,8 +124,8 @@ func (c *Client) Voids(paymentID string, request *VoidsRequest, params *checkout
 
 // IncrementAuthorization ...
 func (c *Client) IncrementAuthorization(paymentID string, request *AuthorizationRequest, params *checkout.Params) (*AuthorizationResponse, error) {
-	response, err := c.API.Post(fmt.Sprintf("/%v/%v/authorizations", path, paymentID), request, params)
+	response, _ := c.API.Post(fmt.Sprintf("/%v/%v/authorizations", path, paymentID), request, params)
 	var authorization *AuthorizationResponse
-	err = json.Unmarshal(response.ResponseBody, &authorization)
+	err := json.Unmarshal(response.ResponseBody, &authorization)
 	return authorization, err
 }

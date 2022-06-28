@@ -1,12 +1,20 @@
 package payments
 
 import (
-	"encoding/json"
 	"fmt"
 	"time"
 
 	"github.com/checkout/checkout-sdk-go"
 	"github.com/checkout/checkout-sdk-go/common"
+)
+
+type FastFundsEligibility string
+
+const (
+	FastFundsDomesticOnly           FastFundsEligibility = "d"
+	FastFundsCrossBorderOnly        FastFundsEligibility = "c"
+	FastFundsDomesticAndCrossBorder FastFundsEligibility = "dc"
+	FastFundsUnsupported            FastFundsEligibility = "u"
 )
 
 type (
@@ -28,8 +36,8 @@ type (
 		ThreeDS           *ThreeDS           `json:"3ds,omitempty"`
 		PreviousPaymentID string             `json:"previous_payment_id,omitempty"`
 		Risk              *Risk              `json:"risk,omitempty"`
-		SuccessURL        string             `json:"success_url,omitempty,omitempty"`
-		FailureURL        string             `json:"failure_url,omitempty,omitempty"`
+		SuccessURL        string             `json:"success_url,omitempty"`
+		FailureURL        string             `json:"failure_url,omitempty"`
 		PaymentIP         string             `json:"payment_ip,omitempty"`
 		Recipient         *Recipient         `json:"recipient,omitempty"`
 		Destinations      []*Destination     `json:"destinations,omitempty"`
@@ -363,8 +371,8 @@ type (
 	IDDestination struct {
 		Type      string `json:"type" binding:"required"`
 		ID        string `json:"id" binding:"required"`
-		FirstName string `json:"first_name,required"`
-		LastName  string `json:"last_name,required"`
+		FirstName string `json:"first_name" binding:"required"`
+		LastName  string `json:"last_name" binding:"required"`
 	}
 
 	// CardDestination ...
@@ -373,8 +381,8 @@ type (
 		Number         string          `json:"number" binding:"required"`
 		ExpiryMonth    uint64          `json:"expiry_month" binding:"required"`
 		ExpiryYear     uint64          `json:"expiry_year" binding:"required"`
-		FirstName      string          `json:"first_name,required"`
-		LastName       string          `json:"last_name,required"`
+		FirstName      string          `json:"first_name" binding:"required"`
+		LastName       string          `json:"last_name" binding:"required"`
 		Name           string          `json:"name,omitempty"`
 		BillingAddress *common.Address `json:"billing_address,omitempty"`
 		Phone          *common.Phone   `json:"phone,omitempty"`
@@ -492,7 +500,7 @@ func (r *Request) SetSource(s interface{}) error {
 	case MultibancoSource:
 	case map[string]string:
 	default:
-		err = fmt.Errorf("Unsupported source type %T", p)
+		err = fmt.Errorf("unsupported source type %T", p)
 	}
 	if err == nil {
 		r.Source = s
@@ -509,7 +517,7 @@ func (r *Request) SetDestination(d interface{}) error {
 	case *TokenDestination:
 	case map[string]string:
 	default:
-		err = fmt.Errorf("Unsupported source type %T", p)
+		err = fmt.Errorf("unsupported desintation type %T", p)
 	}
 	if err == nil {
 		r.Destination = d
@@ -586,45 +594,31 @@ type (
 		Actions           []ActionSummary      `json:"actions,omitempty"`
 		SchemeID          string               `json:"scheme_id,omitempty"`
 	}
-	// SourceResponse ...
+
 	SourceResponse struct {
-		*CardSourceResponse
-		*AlternativePaymentSourceResponse
+		ID                      string               `json:"id,omitempty"`
+		Type                    string               `json:"type,omitempty"`
+		BillingAddress          *common.Address      `json:"billing_address,omitempty"`
+		Phone                   *common.Phone        `json:"phone,omitempty"`
+		ExpiryMonth             uint64               `json:"expiry_month,omitempty"`
+		ExpiryYear              uint64               `json:"expiry_year,omitempty"`
+		Name                    string               `json:"name,omitempty"`
+		Scheme                  string               `json:"scheme,omitempty"`
+		Last4                   string               `json:"last4,omitempty"`
+		Fingerprint             string               `json:"fingerprint,omitempty"`
+		Bin                     string               `json:"bin,omitempty"`
+		CardType                common.CardType      `json:"card_type,omitempty"`
+		CardCategory            common.CardCategory  `json:"card_category,omitempty"`
+		Issuer                  string               `json:"issuer,omitempty"`
+		IssuerCountry           string               `json:"issuer_country,omitempty"`
+		ProductID               string               `json:"product_id,omitempty"`
+		ProductType             string               `json:"product_type,omitempty"`
+		AVSCheck                string               `json:"avs_check,omitempty"`
+		CVVCheck                string               `json:"cvv_check,omitempty"`
+		PaymentAccountReference string               `json:"payment_account_reference,omitempty"`
+		Payouts                 *bool                `json:"payouts,omitempty"`
+		FastFunds               FastFundsEligibility `json:"fast_funds,omitempty"`
 	}
-	// CardSourceResponse ...
-	CardSourceResponse struct {
-		ID                      string              `json:"id,omitempty"`
-		Type                    string              `json:"type,omitempty"`
-		BillingAddress          *common.Address     `json:"billing_address,omitempty"`
-		Phone                   *common.Phone       `json:"phone,omitempty"`
-		ExpiryMonth             uint64              `json:"expiry_month,omitempty"`
-		ExpiryYear              uint64              `json:"expiry_year,omitempty"`
-		Name                    string              `json:"name,omitempty"`
-		Scheme                  string              `json:"scheme,omitempty"`
-		Last4                   string              `json:"last4,omitempty"`
-		Fingerprint             string              `json:"fingerprint,omitempty"`
-		Bin                     string              `json:"bin,omitempty"`
-		CardType                common.CardType     `json:"card_type,omitempty"`
-		CardCategory            common.CardCategory `json:"card_category,omitempty"`
-		Issuer                  string              `json:"issuer,omitempty"`
-		IssuerCountry           string              `json:"issuer_country,omitempty"`
-		ProductID               string              `json:"product_id,omitempty"`
-		ProductType             string              `json:"product_type,omitempty"`
-		AVSCheck                string              `json:"avs_check,omitempty"`
-		CVVCheck                string              `json:"cvv_check,omitempty"`
-		PaymentAccountReference string              `json:"payment_account_reference,omitempty"`
-		Payouts                 *bool               `json:"payouts,omitempty"`
-		FastFunds               string              `json:"fast_funds,omitempty"`
-	}
-
-	// AlternativePaymentSourceResponse ...
-	AlternativePaymentSourceResponse struct {
-		ID             string          `json:"id"`
-		Type           string          `json:"type"`
-		BillingAddress *common.Address `json:"billing_address,omitempty"`
-		Phone          *common.Phone   `json:"phone,omitempty"`
-	}
-
 	// DestinationResponse -
 	DestinationResponse struct {
 		ID            string              `json:"id,omitempty"`
@@ -643,43 +637,6 @@ type (
 		ProductType   string              `json:"product_type,omitempty"`
 	}
 )
-
-// MarshalJSON ...
-func (s *SourceResponse) MarshalJSON() ([]byte, error) {
-	if s.CardSourceResponse != nil {
-		return json.Marshal(s.CardSourceResponse)
-	} else if s.AlternativePaymentSourceResponse != nil {
-		return json.Marshal(s.AlternativePaymentSourceResponse)
-	}
-	return json.Marshal(nil)
-}
-
-// UnmarshalJSON ...
-func (s *SourceResponse) UnmarshalJSON(data []byte) error {
-	temp := &struct {
-		Type string `json:"type"`
-	}{}
-	if err := json.Unmarshal(data, &temp); err != nil {
-		return err
-	}
-	switch temp.Type {
-	case "card":
-		var source CardSourceResponse
-		if err := json.Unmarshal(data, &source); err != nil {
-			return err
-		}
-		s.CardSourceResponse = &source
-		s.AlternativePaymentSourceResponse = nil
-	default:
-		var source AlternativePaymentSourceResponse
-		if err := json.Unmarshal(data, &source); err != nil {
-			return err
-		}
-		s.AlternativePaymentSourceResponse = &source
-		s.CardSourceResponse = nil
-	}
-	return nil
-}
 
 type (
 	// Accepted ...
