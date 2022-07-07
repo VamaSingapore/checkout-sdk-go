@@ -33,9 +33,11 @@ func (c *Client) Create(request *CreateRequest, params *checkout.Params) (*Creat
 		return response, err
 	}
 
-	var id string
-	err = json.Unmarshal(resp.ResponseBody, &id)
-	response.ID = id
+	var tempObject struct {
+		ID string `json:"id"`
+	}
+	err = json.Unmarshal(resp.ResponseBody, &tempObject)
+	response.ID = tempObject.ID
 
 	return response, err
 }
